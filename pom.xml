@@ -28,7 +28,6 @@
 	</properties>
 
 
-
 	<pluginRepositories>
 		<pluginRepository>
 			<id>scala-tools.org</id>
@@ -50,6 +49,36 @@
 			<version>2.0.M5</version>
 		</dependency>
 	</dependencies>
+
+
+	<profiles>
+		<profile>
+			<id>withMetrics</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>cobertura-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>code-coverage</id>
+								<phase>package</phase>
+								<goals>
+									<goal>cobertura</goal>
+								</goals>
+								<inherited>false</inherited>
+							</execution>
+						</executions>
+						<configuration>
+							<formats>
+								<format>xml</format>
+							</formats>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
@@ -90,25 +119,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>code-coverage</id>
-						<phase>install</phase>
-						<goals>
-							<goal>cobertura</goal>
-						</goals>
-						<inherited>false</inherited>
-					</execution>
-				</executions>
-				<configuration>
-					<formats>
-						<format>xml</format>
-					</formats>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
