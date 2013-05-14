@@ -7,23 +7,50 @@ package org.schodoLog.proto
  * 
  * The program guarantees that a predicate has only one arity within it.
  */
-case class Program(val rules: Rule*) extends Validating {
+class Program(val rules: Rule*) extends Validating {
   
   require(findMismatchedArities.isEmpty,"Predicates must have same arities, mismatches found in: \n" +
   		findMismatchedArities.mkString("\n"))
   
   
   private def findMismatchedArities():Set[(String,Set[Int])] = {
-    val allAtoms = rules.flatMap((r) => r.head++r.body).toSet
+    val allAtoms = getAllAtoms()
     
     //let's see how many brains we'll fry with this one-liner
     allAtoms.groupBy(_.name).iterator.map{case (name,atoms) => (name,atoms.map(_.terms.length))}.filter(_._2.size > 1).toSet
   }
   
+  protected def getAllAtoms() = rules.flatMap((r) => r.head++r.body).toSet
+  
   def modelOf(i: Interpretation) = rules.forall(_.modelOf(i))
 
   override def toString() = "Program"+rules.mkString("("," ",")")
 }
+
+class GroundProgram(val program: Program) extends Program({
+  
+  //set of all constants in the program
+  val herbrandUniverse = program.rules.flatMap((r) => r.head ++ r.body).flatMap(_.terms).filter(!_.isInstanceOf[Symbol]).toSet
+
+  program.rules.flatMap((r) => {
+    var i = 0
+    val variables = 
+        (r.head ++ r.body).flatMap(_.terms).filter(_.isInstanceOf[Symbol]).toSet.toList.zipWithIndex.toMap
+
+    
+    //all posible assignments
+    val assignments = herbrandUniverse.subsets(variables.size).flatMap(_.toList.permutations)
+    
+    
+    def groundLiteral(l:Literal,assignment:List[Any]) = {
+      Literal(l.name,l.strongNegation,l.terms.map((t) => if(variables.contains(t)) assignment(variables(t)) else t ))
+    }
+    
+    val l = for{assignment <- assignments} 
+      yield Rule(r.head.map(groundLiteral(_,assignment)),r.posBody.map(groundLiteral(_,assignment)),r.negBody.map(groundLiteral(_,assignment)))
+    l
+  })
+}: _*)
 
 /**
  * Base logic rule class. Can be also represented by an Atom, by implicit conversion in the package object.
@@ -60,6 +87,7 @@ case class Rule(val head: Set[Literal],val posBody: Set[Literal],val negBody: Se
   override def toString() = {
     head.mkString(" ∨ ") + (if(body.isEmpty) "" else " ⟵  "+(posBody.map(_.toString)++negBody.map("not "+_.toString) ).mkString(" ∧ ") )+"."
   }
+  
 }
 
 
@@ -72,6 +100,7 @@ class BodilesRule(override val head: Set[Literal]) extends Rule(head,Set(),Set()
   protected def or(addAtom: Literal) =  new BodilesRule(head + addAtom)
 
 }
+
 
 /**
  * Basic Literal/Atom, building block of rules.

@@ -5,7 +5,7 @@ package org.schodoLog.proto
  */
 trait Solver {
   
-  def solve(r: Rule*): Set[Set[Literal]] = solve(Program(r: _*))
+  def solve(r: Rule*): Set[Set[Literal]] = solve(new Program(r: _*))
   
   def solve(p: Program): Set[Set[Literal]]
 
