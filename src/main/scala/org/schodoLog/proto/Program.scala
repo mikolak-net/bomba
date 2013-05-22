@@ -13,50 +13,64 @@ class Program(val rules: Rule*) extends Validating {
   		findMismatchedArities.mkString("\n"))
   
   
-  private def findMismatchedArities():Set[(String,Set[Int])] = {
-    val allAtoms = getAllAtoms()
+  lazy val findMismatchedArities:Set[(String,Set[Int])] = {
+    val allAtoms = rules.flatMap((r) => r.head++r.body).toSet
     
     //let's see how many brains we'll fry with this one-liner
     allAtoms.groupBy(_.name).iterator.map{case (name,atoms) => (name,atoms.map(_.terms.length))}.filter(_._2.size > 1).toSet
   }
   
-  protected def getAllAtoms() = rules.flatMap((r) => r.head++r.body).toSet
+  //Note: this is not strictly needed currently (i.e. nothing will blow up if unsafe rules are allowed), 
+  //this is just a bit of future-proofing
+  require(unsafeRuleVariablePairs.isEmpty,"Unsafe rules in program: \n" +
+  		unsafeRuleVariablePairs.mkString("\n"))
+  
+  lazy val unsafeRuleVariablePairs: Seq[(Rule,Set[Variable])] = {
+    //a rule is safe if every variable in the negative body and head is also in the positive body
+    rules.map((r) => (r,(extractVars(r.negBody)++extractVars(r.head))--extractVars(r.posBody))).filterNot(_._2.isEmpty)
+  }
   
   def modelOf(i: Interpretation) = rules.forall(_.modelOf(i))
-
+  
   override def toString() = "Program"+rules.mkString("("," ",")")
+  
+  override def equals(obj: Any) = (obj.isInstanceOf[Program] && obj.asInstanceOf[Program].rules == rules)
 }
 
 class GroundProgram(val program: Program) extends Program({
   
+
+  
   //set of all constants in the program
-  val herbrandUniverse = program.rules.flatMap((r) => r.head ++ r.body).flatMap(_.terms).filter(!_.isInstanceOf[Symbol]).toSet
+  val herbrandUniverse = program.rules.flatMap((r) => r.head ++ r.body).flatMap(_.terms).filter(!_.isInstanceOf[Variable]).toSet
 
   program.rules.flatMap((r) => {
-    var i = 0
-    val variables = 
-        (r.head ++ r.body).flatMap(_.terms).filter(_.isInstanceOf[Symbol]).toSet.toList.zipWithIndex.toMap
+    
+    val variables = extractVars(r.head ++ r.body).asInstanceOf[Set[Any]].toList.zipWithIndex.toMap
 
-    
     //all posible assignments
-    val assignments = herbrandUniverse.subsets(variables.size).flatMap(_.toList.permutations)
+    val assignments = permutations(herbrandUniverse,variables.size)
     
     
-    def groundLiteral(l:Literal,assignment:List[Any]) = {
-      Literal(l.name,l.strongNegation,l.terms.map((t) => if(variables.contains(t)) assignment(variables(t)) else t ))
+    //helper function for generating grounded literal sets
+    def groundLiterals(set: Set[Literal],assignment: List[Any]) = {
+      set.map(_.ground(variables, assignment))
     }
     
     val l = for{assignment <- assignments} 
-      yield Rule(r.head.map(groundLiteral(_,assignment)),r.posBody.map(groundLiteral(_,assignment)),r.negBody.map(groundLiteral(_,assignment)))
-    l
+      yield Rule(groundLiterals(r.head, assignment),groundLiterals(r.posBody, assignment),groundLiterals(r.negBody, assignment))
+    l.toSet
   })
-}: _*)
+}: _*) //this is actually the end of the superclass override declaration - maybe it could be made nicer somehow?
 
 /**
  * Base logic rule class. Can be also represented by an Atom, by implicit conversion in the package object.
  */
 case class Rule(val head: Set[Literal],val posBody: Set[Literal],val negBody: Set[Literal]) 
 	extends  Validating with AtomContainer with Conjunctive {
+  
+  //require check for safety
+
   
   def this(head: Set[Literal],body: Seq[AtomContainer]) = this(head,body.flatMap(_.getPosAtoms).toSet,body.flatMap(_.getNegAtoms).toSet)
   
@@ -144,6 +158,13 @@ case class Literal(val name: String, val strongNegation: Boolean, val terms: Any
   
   override def toString() =  (if(strongNegation) "-" else "") + name+(if(terms.isEmpty) "" else terms.mkString("(",",",")"))
   
+  
+  /**
+  * Grounds the given literal.
+  */
+  def ground(variables: Map[Any,Int], assignment:List[Any]) = {
+     Literal(name,strongNegation,terms.map((t) => if(variables.contains(t)) assignment(variables(t)) else t ): _*)
+  }    
   
 }
 

@@ -7,7 +7,9 @@ trait Solver {
   
   def solve(r: Rule*): Set[Set[Literal]] = solve(new Program(r: _*))
   
-  def solve(p: Program): Set[Set[Literal]]
+  def solve(p: Program): Set[Set[Literal]] = solve(new GroundProgram(p))
+  
+  def solve(p: GroundProgram): Set[Set[Literal]]
 
 }
 
@@ -17,7 +19,7 @@ trait Solver {
  */
 class NaiveSolver extends Solver {
   
-  override def solve(p: Program) = {
+  override def solve(p: GroundProgram) = {
     
     //all possible interpretations
     val allInterpretations = p.rules.flatMap((r) => r.body++r.head).toSet.subsets

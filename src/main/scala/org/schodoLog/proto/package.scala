@@ -1,19 +1,14 @@
 package org.schodoLog
 
-/**
- * schodoLog prototype package
- * 
- * Contains the following core elements:
- * -Program - core type for creating program
- * -Rule - type that represents a (not necessarily completely constructed) logic rule
- * -Atom - type that represents a logic atom, can be implicitly converted into a basic rule
- * -implicits for syntactic sugar allowing to define logic programs in a more concise way
- * -object methods that do the same, specifically allowing to create constraints
- */
+import org.schodoLog.proto.AtomContainer
+import org.schodoLog.proto.Literal
+import org.schodoLog.proto.Rule
 package object proto {
   
   
 	type Interpretation = Set[Literal]
+	
+	type Variable = Symbol
 	
 	/**
 	 * Implicit conversion method for Program's constructor, to allow for facts.
@@ -36,4 +31,34 @@ package object proto {
 	def :-(rule: Rule) = rule
 
 	def ⟵(rule: Rule) = :-(rule)
+	
+	/**
+	 * Generates all possible permutations (with replacement) of <code>items</code>
+	 * of length <code>length</code>.
+	 */
+	def permutations[T](items: Set[T],length: Int): Set[List[T]] = {
+		
+	  if(length < 0) {
+	    throw new IllegalArgumentException("Length must be >= 0")
+	  }
+	  
+	  if(items.isEmpty && length > 0) {
+	    throw new IllegalArgumentException("Empty set cannot generate non-zero-length permutations!")
+	  }
+	  
+	  def doPermutations[T](items: Set[T],length: Int): Set[List[T]] = length match {
+	    case 0 => Set(List())
+	    case length => items.flatMap(item => doPermutations(items,length-1).map(item::_))
+	  }
+	  
+	  doPermutations(items,length)
+	}
+	
+	
+  /**
+   * Helper function for variable set generation in a given part of a rule.
+   */
+  def extractVars(litSet: Set[Literal]): Set[Variable] = {
+      litSet.flatMap(_.terms.filter(_.isInstanceOf[Variable])).toSet.asInstanceOf[Set[Variable]]
+  }
 }

@@ -8,15 +8,13 @@ import org.schodoLog.proto._
 object playground {
     new NaiveSolver().solve(new Program(
    	p"y" v p"x"
-   ))                                             //> res0: scala.collection.immutable.Set[scala.collection.immutable.Set[org.scho
-                                                  //| doLog.proto.Literal]] = Set(Set(y), Set(x))
+   ))                                             //> res0: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(y), Set(x))
    
    
    new NaiveSolver().solve(new Program(
    	p"rain" :- p"wet",
    	p"wet"
-   ))                                             //> res1: scala.collection.immutable.Set[scala.collection.immutable.Set[org.scho
-                                                  //| doLog.proto.Literal]] = Set(Set(wet, rain))
+   ))                                             //> res1: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(wet, rain))
  
  
    :-(p"x")                                       //> res2: org.schodoLog.proto.Rule =  ⟵  x.
@@ -61,8 +59,7 @@ object playground {
 		p"y" :- p"x"
    )                                              //> ps  : org.schodoLog.proto.Program = Program(x. y ⟵  x.)
    
-   new NaiveSolver().solve(ps)                    //> res8: scala.collection.immutable.Set[scala.collection.immutable.Set[org.scho
-                                                  //| doLog.proto.Literal]] = Set(Set(x, y))
+   new NaiveSolver().solve(ps)                    //> res8: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(x, y))
    
    val ps1 = new Program(
    	p"y" v p"x"
@@ -70,35 +67,30 @@ object playground {
     
    new NaiveSolver().solve(new Program(
    	p"y" v p"x"
-   ))                                             //> res9: scala.collection.immutable.Set[scala.collection.immutable.Set[org.scho
-                                                  //| doLog.proto.Literal]] = Set(Set(y), Set(x))
+   ))                                             //> res9: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(y), Set(x))
    
    
    new NaiveSolver().solve(new Program(
    	p"rain" :- p"wet",
    	p"wet"
-   ))                                             //> res10: scala.collection.immutable.Set[scala.collection.immutable.Set[org.sch
-                                                  //| odoLog.proto.Literal]] = Set(Set(wet, rain))
+   ))                                             //> res10: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(wet, rain))
    new NaiveSolver().solve(new Program(
    	p"rain"(Set("a")) :- p"wet",
    	p"wet"
-   ))                                             //> res11: scala.collection.immutable.Set[scala.collection.immutable.Set[org.sc
-                                                  //| hodoLog.proto.Literal]] = Set(Set(wet, rain(Set(a))))
+   ))                                             //> res11: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(wet, rain(Set(a))))
        
-   //variables
-   new NaiveSolver().solve(new Program(
+  //variables
+	val varProg = new Program(
    	p"x"(1),
-   	p"x"(2),
-   	p"y"('X) :- p"x"('X)
-   ))                                             //> res12: scala.collection.immutable.Set[scala.collection.immutable.Set[org.sc
-                                                  //| hodoLog.proto.Literal]] = Set(Set(x(1), x(2)))
-   
-   
-	new GroundProgram(new Program(
-   	p"x"(1),
-   	p"x"(2),
-   	p"y"('X) :- p"x"('X)
-   ))                                             //> res13: org.schodoLog.proto.GroundProgram = Program(x(ArrayBuffer(1)). x(Arr
-                                                  //| ayBuffer(2)). y(ArrayBuffer(1)) ⟵  x(ArrayBuffer(1)). y(ArrayBuffer(2)) �1301 ��  x(ArrayBuffer(2)).)
-   
+   	p"y"(2),
+   	p"z"('X,'Y) :- (p"x"('X),p"y"('Y))
+   )                                              //> varProg  : org.schodoLog.proto.Program = Program(x(1). y(2). z('X,'Y) ⟵  
+                                                  //| x('X) ∧ y('Y).)
+	
+	val varProgGround = new GroundProgram(varProg)
+                                                  //> varProgGround  : org.schodoLog.proto.GroundProgram = Program(x(1). y(2). z(
+                                                  //| 1,1) ⟵  x(1) ∧ y(1). z(1,2) ⟵  x(1) ∧ y(2). z(2,1) ⟵  x(2) ∧ y(
+                                                  //| 1). z(2,2) ⟵  x(2) ∧ y(2).)
+  new NaiveSolver().solve(varProgGround)          //> res12: scala.collection.immutable.Set[scala.collection.immutable.Set[org.sc
+                                                  //| hodoLog.proto.Literal]] = Set(Set(z(1,2), y(2), x(1)))
 }
