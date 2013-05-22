@@ -69,7 +69,7 @@ Examples
 	  p"p1"("a"),
 	  p"p1"("b"),
 	  p"p2"('X) :- p"p1"('X)
-  	)                                             //>Set(Set(p1(a), p1(b), p2(a),p2(b)))
+  	)                                             //>Set(Set(p1(a), p1(b), p2(a), p2(b)))
 
 Comments? Issues?
 ------------
