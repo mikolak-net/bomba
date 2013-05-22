@@ -27,7 +27,7 @@ A **literal** is of the form
     
 where `n >= 0` (if `n=0`, the parenthesis are optional), and `x1,...,xn` are of the type `Any`. `-` means "strong negation".
 
-Currently, all literals are ground. 
+An `xm` (`1 <= m <= n`) of type Symbol (e.g. 'X ), is a **variable**.
 
 A **rule** is of the form
 
@@ -47,7 +47,7 @@ where `r1,...,rn` are rules.
 Semantics
 ------------
 Semantics depend on the solver used. The current reference implementation, `org.schodoLog.proto.NaiveSolver`, uses standard
-disjunctive ground semantics, with the Ferraris and Lifschitz resolution variant for strong negation. To generate all answer sets, use:
+disjunctive semantics, with the Ferraris and Lifschitz resolution variant for strong negation. To generate all answer sets, use:
 
 	NaiveSolver(Program(...))
 	
@@ -55,16 +55,21 @@ disjunctive ground semantics, with the Ferraris and Lifschitz resolution variant
 Examples
 -----------
 
-    new NaiveSolver().solve(new Program(
+    new NaiveSolver().solve(
    	 p"y" v p"x"
-    ))                                             //>Set(Set(y), Set(x))
+    )                                             //>Set(Set(y), Set(x))
    
    
-    new NaiveSolver().solve(Program(
+    new NaiveSolver().solve(
    	 p"rain" :- p"wet",
    	 p"wet"
-    ))                                             //>Set(Set(wet, rain))
+    )                                             //>Set(Set(wet, rain))
 
+    new NaiveSolver().solve(
+	  p"p1"("a"),
+	  p"p1"("b"),
+	  p"p2"('X) :- p"p1"('X)
+  	)                                             //>Set(Set(p1(a), p1(b), p2(a),p2(b)))
 
 Comments? Issues?
 ------------
