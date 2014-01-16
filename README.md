@@ -55,7 +55,9 @@ Semantics
 Semantics depend on the solver used. The current reference implementation, `org.schodoLog.proto.NaiveSolver`, uses standard
 disjunctive semantics, with the Ferraris and Lifschitz resolution variant for strong negation. To generate all answer sets, use:
 
-	NaiveSolver(Program(...))
+```scala
+NaiveSolver(Program(...))
+```
 	
 	
 Examples
