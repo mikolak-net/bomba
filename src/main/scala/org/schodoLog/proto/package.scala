@@ -3,6 +3,7 @@ package org.schodoLog
 import org.schodoLog.proto.AtomContainer
 import org.schodoLog.proto.Literal
 import org.schodoLog.proto.Rule
+import scala.language.dynamics
 package object proto {
   
   
@@ -15,11 +16,17 @@ package object proto {
 	 */
 	implicit def Atom2Rule(atom: Literal) = atom:-()
 	
-	implicit class AtomConverter(val sc: StringContext) extends AnyVal {
-	  def p(args: Any*) = {
-	    Literal(sc.raw(),false)
-	  }
-    }
+	object p extends AnyRef with Dynamic {
+	  
+	    /**
+	     * for preventing any2Ensuring and any2ArrowAssoc implicit conversions from Predef
+	     */
+		def x = new Literal("x")
+	  
+		def selectDynamic(predName: String): Literal = new Literal(predName)
+	  
+		def applyDynamic(predName: String)(args: Any*): Literal = new Literal(predName)(args : _*)
+	}
 	
 	/**
 	 * Syntactic sugar for constraints.

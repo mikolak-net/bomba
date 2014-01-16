@@ -225,6 +225,8 @@ trait Conjunctive {
    */
   protected def and(other: Literal): Rule = and(Rule(Set(),Set(other),Set()))
 
+  def &(other: Rule) = and(other)
+  def &(other: Literal) = and(other)
   
   def ∧(other: Literal) = and(other)
   def ∧(bodyRule: Rule) =  and(bodyRule)

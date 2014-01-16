@@ -22,8 +22,8 @@ The syntax is similar to other Answer Set Programming dialects.
 
 A **literal** is of the form
 
-    p"name"(x1,...,xn)
-    -p"name"(x1,...,xn)
+    p.name.(x1,...,xn)
+    -p.name(x1,...,xn)
     
 where `n >= 0` (if `n=0`, the parenthesis are optional), and `x1,...,xn` are of the type `Any`. `-` means "strong negation".
 
@@ -55,20 +55,22 @@ disjunctive semantics, with the Ferraris and Lifschitz resolution variant for st
 Examples
 -----------
 
+    import org.schodoLog.proto._   //imports the required implicits and the "magic" p object
+
     new NaiveSolver().solve(
-   	 p"y" v p"x"
+   	 p.y v p.x
     )                                             //>Set(Set(y), Set(x))
    
    
     new NaiveSolver().solve(
-   	 p"rain" :- p"wet",
-   	 p"wet"
+   	 p.rain :- p.wet,
+   	 p.wet
     )                                             //>Set(Set(wet, rain))
 
     new NaiveSolver().solve(
-	  p"p1"("a"),
-	  p"p1"("b"),
-	  p"p2"('X) :- p"p1"('X)
+	  p.p1("a"),
+	  p.p1("b"),
+	  p.p2('X) :- p.p1('X)
   	)                                             //>Set(Set(p1(a), p1(b), p2(a), p2(b)))
 
 Comments? Issues?
