@@ -22,8 +22,10 @@ The syntax is similar to other Answer Set Programming dialects.
 
 A **literal** is of the form
 
-    p.name.(x1,...,xn)
-    -p.name(x1,...,xn)
+```scala
+p.name(x1,...,xn)
+-p.name(x1,...,xn)
+```
     
 where `n >= 0` (if `n=0`, the parenthesis are optional), and `x1,...,xn` are of the type `Any`. `-` means "strong negation".
 
@@ -31,14 +33,18 @@ An `xm` (`1 <= m <= n`) of type Symbol (e.g. 'X ), is a **variable**.
 
 A **rule** is of the form
 
-     hP1 v ... v hPl :- (bP1,...,bPm,~nbP1,...,~nbPn)
-     hP1 ∨ ... ∨ hPl ⟵  bP1 ∧ ... ∧ bPm ∧ ~nbP1 ∧ ... ∧ ~nbPn
+```scala
+hP1 v ... v hPl :- (bP1,...,bPm,~nbP1,...,~nbPn)
+hP1 ∨ ... ∨ hPl ⟵  bP1 ∧ ... ∧ bPm ∧ ~nbP1 ∧ ... ∧ ~nbPn
+```
 
 where `hP1,...,hPl, bP1,...,bPm, nbP1,...,nbPn` are literals. `~` means "default negation".
 
 A **program** is of the form
 
-	Program(r1,...,rn)
+```scala
+Program(r1,...,rn)
+```
   
 where `r1,...,rn` are rules.
 
@@ -55,23 +61,25 @@ disjunctive semantics, with the Ferraris and Lifschitz resolution variant for st
 Examples
 -----------
 
-    import org.schodoLog.proto._   //imports the required implicits and the "magic" p object
+```scala
+import org.schodoLog.proto._   //imports the required implicits and the "magic" p object
 
-    new NaiveSolver().solve(
-   	 p.y v p.x
-    )                                             //>Set(Set(y), Set(x))
+new NaiveSolver().solve(
+   p.y v p.x
+)                                             //>Set(Set(y), Set(x))
    
    
-    new NaiveSolver().solve(
-   	 p.rain :- p.wet,
-   	 p.wet
-    )                                             //>Set(Set(wet, rain))
+new NaiveSolver().solve(
+   p.rain :- p.wet,
+   p.wet
+)                                             //>Set(Set(wet, rain))
 
-    new NaiveSolver().solve(
-	  p.p1("a"),
-	  p.p1("b"),
-	  p.p2('X) :- p.p1('X)
-  	)                                             //>Set(Set(p1(a), p1(b), p2(a), p2(b)))
+new NaiveSolver().solve(
+   p.p1("a"),
+   p.p1("b"),
+   p.p2('X) :- p.p1('X)
+)                                             //>Set(Set(p1(a), p1(b), p2(a), p2(b)))
+```
 
 Comments? Issues?
 ------------
