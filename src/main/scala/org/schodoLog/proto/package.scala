@@ -4,6 +4,7 @@ import org.schodoLog.proto.AtomContainer
 import org.schodoLog.proto.Literal
 import org.schodoLog.proto.Rule
 import scala.language.dynamics
+
 package object proto {
   
   
@@ -11,6 +12,13 @@ package object proto {
 	
 	type Variable = Symbol
 	
+	type AnswerSet = Set[Set[Literal]]
+	
+	/**
+	 * Default solver needed for Program.solve defs.
+	 */
+	implicit val defaultSolver: () => Solver = {(() => new NaiveSolver())}
+	 
 	/**
 	 * Implicit conversion method for Program's constructor, to allow for facts.
 	 */

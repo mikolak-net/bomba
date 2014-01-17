@@ -22,15 +22,15 @@ object playground {
 		 
 		p.z(1,2)                          //> res2: org.schodoLog.proto.Literal = z(1,2)
 		
-    new NaiveSolver().solve(new Program(
+    new Program(
    	p.y() v p.z()
-   ))                                             //> res3: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(y), Set(z))
+   ).solve                                        //> res3: org.schodoLog.proto.AnswerSet = Set(Set(y), Set(z))
    
    
-   new NaiveSolver().solve(new Program(
+   new Program(
    	p.rain :- p.wet,
    	p.wet
-   ))                                             //> res4: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(wet, rain))
+   ).solve                                        //> res4: org.schodoLog.proto.AnswerSet = Set(Set(wet, rain))
  
  
    :-(p.x)                                        //> res5: org.schodoLog.proto.Rule =  ⟵  x.
@@ -71,25 +71,32 @@ object playground {
 		p.y :- p.x
    )                                              //> ps  : org.schodoLog.proto.Program = Program(x. y ⟵  x.)
    
-   new NaiveSolver().solve(ps)                    //> res11: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(x, y))
+   ps.solve                                       //> res11: org.schodoLog.proto.AnswerSet = Set(Set(x, y))
    
    val ps1 = new Program(
    	p.y v p.x
    )                                              //> ps1  : org.schodoLog.proto.Program = Program(y ∨ x.)
     
-   new NaiveSolver().solve(new Program(
+   new Program(
    	p.y v p.x
-   ))                                             //> res12: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(y), Set(x))
+   ).solve                                        //> res12: org.schodoLog.proto.AnswerSet = Set(Set(y), Set(x))
    
    
-   new NaiveSolver().solve(new Program(
+   new Program(
    	p.rain :- p.wet,
    	p.wet
-   ))                                             //> res13: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(wet, rain))
-   new NaiveSolver().solve(new Program(
+   ).solve                                        //> res13: org.schodoLog.proto.AnswerSet = Set(Set(wet, rain))
+   
+   val r0 = new Program(
+     p.rain :- p.wet
+   )                                              //> r0  : org.schodoLog.proto.Program = Program(rain ⟵  wet.)
+   r0.solve                                       //> res14: org.schodoLog.proto.AnswerSet = Set(Set())
+   r0.solve(p.wet)                                //> res15: org.schodoLog.proto.AnswerSet = Set(Set(wet, rain))
+   
+   new Program(
    	p.rain(Set("a")) :- p.wet,
    	p.wet
-   ))                                             //> res14: Set[Set[org.schodoLog.proto.Literal]] = Set(Set(wet, rain(Set(a))))
+   ).solve                                        //> res16: org.schodoLog.proto.AnswerSet = Set(Set(wet, rain(Set(a))))
        
   //variables
 	val varProg = new Program(
@@ -99,12 +106,11 @@ object playground {
    )                                              //> varProg  : org.schodoLog.proto.Program = Program(x(1). y(2). z('X,'Y) ⟵  
                                                   //| x('X) ∧ y('Y).)
   //alternative notation ommiting parens
-  p.z('X,'Y) :-  p.x('X) & ~p.y('Y)               //> res15: org.schodoLog.proto.Rule = z('X,'Y) ⟵  x('X) ∧ not y('Y).
+  p.z('X,'Y) :-  p.x('X) & ~p.y('Y)               //> res17: org.schodoLog.proto.Rule = z('X,'Y) ⟵  x('X) ∧ not y('Y).
 	
 	val varProgGround = new GroundProgram(varProg)
                                                   //> varProgGround  : org.schodoLog.proto.GroundProgram = Program(x(1). y(2). z(
                                                   //| 1,1) ⟵  x(1) ∧ y(1). z(1,2) ⟵  x(1) ∧ y(2). z(2,1) ⟵  x(2) ∧ y(
                                                   //| 1). z(2,2) ⟵  x(2) ∧ y(2).)
-  new NaiveSolver().solve(varProgGround)          //> res16: scala.collection.immutable.Set[scala.collection.immutable.Set[org.sc
-                                                  //| hodoLog.proto.Literal]] = Set(Set(z(1,2), y(2), x(1)))
+  varProgGround.solve                             //> res18: org.schodoLog.proto.AnswerSet = Set(Set(z(1,2), y(2), x(1)))
 }

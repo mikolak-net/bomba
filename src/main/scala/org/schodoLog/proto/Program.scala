@@ -35,6 +35,24 @@ class Program(val rules: Rule*) extends Validating {
   override def toString() = "Program"+rules.mkString("("," ",")")
   
   override def equals(obj: Any) = (obj.isInstanceOf[Program] && obj.asInstanceOf[Program].rules == rules)
+  
+  def solve(implicit solverGen: () => Solver): AnswerSet = solverGen().solve(this)
+  
+  /**
+   * Allows for adding program snippets and data, idiomatic to interaction with "normal" code.
+   */
+  def solve(mergedProgram: Program)(implicit solverGen: () => Solver): AnswerSet = {
+	  				new Program((this.rules.view ++ mergedProgram.rules.toList):_*)
+	  					.solve(solverGen)
+  				}
+  
+  /**
+   * Same as above, but for rules (TODO: allow implicit into program?)
+   */
+  def solve(mergedRule: Rule*)(implicit solverGen: () => Solver): AnswerSet = {
+		  	solve(new Program(mergedRule:_*))(solverGen)
+  }
+  
 }
 
 class GroundProgram(val program: Program) extends Program({

@@ -56,9 +56,16 @@ Semantics depend on the solver used. The current reference implementation, `org.
 disjunctive semantics, with the Ferraris and Lifschitz resolution variant for strong negation. To generate all answer sets, use:
 
 ```scala
-NaiveSolver(Program(...))
+new Program(...).solve
 ```
 	
+The idiomatic way of interfacing your logic programs with the rest of your code is to define your "oracle" program, and then inject
+the data you wish to provide in the solve method, e.g.:
+
+```scala
+val oracle = new Program(...)
+oracle.solve(p.somePredicate(someData),...)
+```
 	
 Examples
 -----------
@@ -66,22 +73,32 @@ Examples
 ```scala
 import org.schodoLog.proto._   //imports the required implicits and the "magic" p object
 
-new NaiveSolver().solve(
+new Program(
    p.y v p.x
-)                                             //>Set(Set(y), Set(x))
+).solve                                           //>Set(Set(y), Set(x))
    
    
-new NaiveSolver().solve(
+new Program(
    p.rain :- p.wet,
    p.wet
-)                                             //>Set(Set(wet, rain))
+).solve                                           //>Set(Set(wet, rain))
 
-new NaiveSolver().solve(
+//same result as above, but with idiomatic merging
+val r0 = new Program(
+   p.rain :- p.wet
+)                                                 //>Program(rain ⟵  wet.)
+r0.solve                                          //>Set(Set())
+r0.solve(p.wet)                                   //>Set(Set(wet, rain))
+   
+
+new Program(
    p.p1("a"),
    p.p1("b"),
    p.p2('X) :- p.p1('X)
-)                                             //>Set(Set(p1(a), p1(b), p2(a), p2(b)))
+).solve                                           //>Set(Set(p1(a), p1(b), p2(a), p2(b)))
 ```
+
+For more examples, help yourself to the Worksheet `playground.sc` in the `org.schodoLog.playground` package. 
 
 Comments? Issues?
 ------------
