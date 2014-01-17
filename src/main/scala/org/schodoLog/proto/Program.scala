@@ -42,16 +42,16 @@ class Program(val rules: Rule*) extends Validating {
    * Allows for adding program snippets and data, idiomatic to interaction with "normal" code.
    */
   def solve(mergedProgram: Program)(implicit solverGen: () => Solver): AnswerSets = {
-	  				new Program((this.rules.view ++ mergedProgram.rules.toList):_*)
-	  					.solve(solverGen)
+	  				new Program((this.rules.view ++ mergedProgram.rules.toList):_*).
+	  					solve(solverGen)
   				}
   
   /**
    * Same as above, but for rules (TODO: allow implicit into program?)
    */
   def solve(mergedRule: Rule*)(implicit solverGen: () => Solver): AnswerSets = {
-		  	solve(new Program(mergedRule:_*))(solverGen)
-  }
+		  			solve(new Program(mergedRule:_*))(solverGen)
+  				}
   
 }
 
