@@ -12,7 +12,7 @@ package object proto {
 	
 	type Variable = Symbol
 	
-	type AnswerSet = Set[Set[Literal]]
+	type AnswerSets = Set[Set[Literal]]
 	
 	/**
 	 * Default solver needed for Program.solve defs.

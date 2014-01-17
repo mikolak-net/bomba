@@ -36,12 +36,12 @@ class Program(val rules: Rule*) extends Validating {
   
   override def equals(obj: Any) = (obj.isInstanceOf[Program] && obj.asInstanceOf[Program].rules == rules)
   
-  def solve(implicit solverGen: () => Solver): AnswerSet = solverGen().solve(this)
+  def solve(implicit solverGen: () => Solver): AnswerSets = solverGen().solve(this)
   
   /**
    * Allows for adding program snippets and data, idiomatic to interaction with "normal" code.
    */
-  def solve(mergedProgram: Program)(implicit solverGen: () => Solver): AnswerSet = {
+  def solve(mergedProgram: Program)(implicit solverGen: () => Solver): AnswerSets = {
 	  				new Program((this.rules.view ++ mergedProgram.rules.toList):_*)
 	  					.solve(solverGen)
   				}
@@ -49,7 +49,7 @@ class Program(val rules: Rule*) extends Validating {
   /**
    * Same as above, but for rules (TODO: allow implicit into program?)
    */
-  def solve(mergedRule: Rule*)(implicit solverGen: () => Solver): AnswerSet = {
+  def solve(mergedRule: Rule*)(implicit solverGen: () => Solver): AnswerSets = {
 		  	solve(new Program(mergedRule:_*))(solverGen)
   }
   
