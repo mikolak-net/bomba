@@ -29,7 +29,7 @@ package object proto {
 	    /**
 	     * for preventing any2Ensuring and any2ArrowAssoc implicit conversions from Predef
 	     */
-		def x = new Literal("x")
+		def x = applyDynamic("x")()
 	  
 		def selectDynamic(predName: String): Literal = new Literal(predName)
 	  

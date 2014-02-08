@@ -24,13 +24,13 @@ object playground {
 		
     new Program(
    	p.y() v p.z()
-   ).solve                                        //> res3: org.schodoLog.proto.AnswerSet = Set(Set(y), Set(z))
+   ).solve                                        //> res3: org.schodoLog.proto.AnswerSets = Set(Set(y), Set(z))
    
    
    new Program(
    	p.rain :- p.wet,
    	p.wet
-   ).solve                                        //> res4: org.schodoLog.proto.AnswerSet = Set(Set(wet, rain))
+   ).solve                                        //> res4: org.schodoLog.proto.AnswerSets = Set(Set(wet, rain))
  
  
    :-(p.x)                                        //> res5: org.schodoLog.proto.Rule =  ⟵  x.
@@ -71,7 +71,7 @@ object playground {
 		p.y :- p.x
    )                                              //> ps  : org.schodoLog.proto.Program = Program(x. y ⟵  x.)
    
-   ps.solve                                       //> res11: org.schodoLog.proto.AnswerSet = Set(Set(x, y))
+   ps.solve                                       //> res11: org.schodoLog.proto.AnswerSets = Set(Set(x, y))
    
    val ps1 = new Program(
    	p.y v p.x
@@ -79,24 +79,24 @@ object playground {
     
    new Program(
    	p.y v p.x
-   ).solve                                        //> res12: org.schodoLog.proto.AnswerSet = Set(Set(y), Set(x))
+   ).solve                                        //> res12: org.schodoLog.proto.AnswerSets = Set(Set(y), Set(x))
    
    
    new Program(
    	p.rain :- p.wet,
    	p.wet
-   ).solve                                        //> res13: org.schodoLog.proto.AnswerSet = Set(Set(wet, rain))
+   ).solve                                        //> res13: org.schodoLog.proto.AnswerSets = Set(Set(wet, rain))
    
    val r0 = new Program(
      p.rain :- p.wet
    )                                              //> r0  : org.schodoLog.proto.Program = Program(rain ⟵  wet.)
-   r0.solve                                       //> res14: org.schodoLog.proto.AnswerSet = Set(Set())
-   r0.solve(p.wet)                                //> res15: org.schodoLog.proto.AnswerSet = Set(Set(wet, rain))
+   r0.solve                                       //> res14: org.schodoLog.proto.AnswerSets = Set(Set())
+   r0.solve(p.wet)                                //> res15: org.schodoLog.proto.AnswerSets = Set(Set(wet, rain))
    
    new Program(
    	p.rain(Set("a")) :- p.wet,
    	p.wet
-   ).solve                                        //> res16: org.schodoLog.proto.AnswerSet = Set(Set(wet, rain(Set(a))))
+   ).solve                                        //> res16: org.schodoLog.proto.AnswerSets = Set(Set(wet, rain(Set(a))))
        
   //variables
 	val varProg = new Program(
@@ -112,5 +112,5 @@ object playground {
                                                   //> varProgGround  : org.schodoLog.proto.GroundProgram = Program(x(1). y(2). z(
                                                   //| 1,1) ⟵  x(1) ∧ y(1). z(1,2) ⟵  x(1) ∧ y(2). z(2,1) ⟵  x(2) ∧ y(
                                                   //| 1). z(2,2) ⟵  x(2) ∧ y(2).)
-  varProgGround.solve                             //> res18: org.schodoLog.proto.AnswerSet = Set(Set(z(1,2), y(2), x(1)))
+  varProgGround.solve                             //> res18: org.schodoLog.proto.AnswerSets = Set(Set(z(1,2), y(2), x(1)))
 }
