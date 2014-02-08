@@ -3,8 +3,6 @@
 
 SchodoLog is an [Answer Set Programming](https://en.wikipedia.org/wiki/Answer_set_programming) dialect in the form of a Scala DSL. It is intended, currently, as a prototype to experiment with possible syntax and semantic variants, as well as language integration.
 
-This is a branch for the "applyDynamic-based" syntax, preserved for historical reasons.
-
 Usage
 ----------
 
