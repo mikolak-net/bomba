@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Bomba : A prototype Answer Set Programming Scala DSL." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Bomba</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/mikkoz/bomba">View on GitHub</a>
+
+          <h1 id="project_title">Bomba</h1>
+          <h2 id="project_tagline">A prototype Answer Set Programming Scala DSL.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/mikkoz/bomba/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/mikkoz/bomba/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="bomba---a-prototype-answer-set-programming-scala-dsl" class="anchor" href="#bomba---a-prototype-answer-set-programming-scala-dsl"><span class="octicon octicon-link"></span></a><strong>bomba</strong> - a prototype Answer Set Programming Scala DSL</h1>
+
+<p>Bomba is an <a href="https://en.wikipedia.org/wiki/Answer_set_programming">Answer Set Programming</a> dialect in the form of a Scala DSL. It is intended, currently, as a prototype to experiment with possible syntax and semantic variants, as well as language integration.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<ol>
+<li>
+
+<ul>
+<li>If your build system is m2-compatible:
+
+<ol>
+<li><code>mvn clean install</code></li>
+<li>Add org.bomba_lang:bomba_lang to your dependencies.</li>
+</ol>
+</li>
+<li>Otherwise:
+
+<ol>
+<li>
+<code>mvn clean package</code>
+
+<ol>
+<li>Add the resulting JAR to the build path of your project.</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>Add: <code>import org.bomba_lang.proto._</code> to your Scala import statements.</li>
+<li>Add the <code>macro-paradise</code> compiler plugin to your Maven/SBT build - as described in <a href="http://docs.scala-lang.org/overviews/macros/paradise.html">the macro documentation</a>. </li>
+</ol><h2>
+<a name="syntax" class="anchor" href="#syntax"><span class="octicon octicon-link"></span></a>Syntax</h2>
+
+<p>The syntax is similar to other Answer Set Programming dialects.</p>
+
+<p>A <strong>literal</strong> is of the form</p>
+
+<div class="highlight highlight-scala"><pre><span class="n">name</span><span class="o">(</span><span class="n">x1</span><span class="o">,...,</span><span class="n">xn</span><span class="o">)</span>
+<span class="o">-</span><span class="n">name</span><span class="o">(</span><span class="n">x1</span><span class="o">,...,</span><span class="n">xn</span><span class="o">)</span>
+</pre></div>
+
+<p>where <code>n &gt;= 0</code> (if <code>n=0</code>, the parenthesis are optional), and <code>x1,...,xn</code> are of the type <code>Any</code>. <code>-</code> means "strong negation".</p>
+
+<p>An <code>xm</code> (<code>1 &lt;= m &lt;= n</code>) of type Symbol (e.g. 'X ), is a <strong>variable</strong>.</p>
+
+<p>A <strong>rule</strong> is of the form</p>
+
+<div class="highlight highlight-scala"><pre><span class="n">hP1</span> <span class="n">v</span> <span class="o">...</span> <span class="n">v</span> <span class="n">hPl</span> <span class="o">:-</span> <span class="o">(</span><span class="n">bP1</span><span class="o">,...,</span><span class="n">bPm</span><span class="o">,~</span><span class="n">nbP1</span><span class="o">,...,~</span><span class="n">nbPn</span><span class="o">)</span>
+<span class="n">hP1</span> <span class="o">∨</span> <span class="o">...</span> <span class="o">∨</span> <span class="n">hPl</span> <span class="o">⟵</span>  <span class="n">bP1</span> <span class="o">∧</span> <span class="o">...</span> <span class="o">∧</span> <span class="n">bPm</span> <span class="o">∧</span> <span class="o">~</span><span class="n">nbP1</span> <span class="o">∧</span> <span class="o">...</span> <span class="o">∧</span> <span class="o">~</span><span class="n">nbPn</span>
+</pre></div>
+
+<p>where <code>hP1,...,hPl, bP1,...,bPm, nbP1,...,nbPn</code> are literals. <code>~</code> means "default negation".</p>
+
+<p>A <strong>program</strong> is a Scala code block of the form</p>
+
+<div class="highlight highlight-scala"><pre><span class="nd">@bomba</span>
+<span class="k">val</span> <span class="n">progName</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="n">r1</span>
+    <span class="o">...</span>
+    <span class="n">rn</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>where <code>r1,...,rn</code> are rules. Note that:</p>
+
+<ul>
+<li>the rules are treated as standard Scala expressions, i.e. they must be either in 
+separate lines, or separated with <code>;</code> when on the same line.</li>
+<li>the names of the literals "shadow" any same-named <code>val</code>s and/or <code>def</code>s in the program's local scope.</li>
+</ul><p><em>Note: yes, this means you can use Unicode symbols for logical operators in your program!</em></p>
+
+<h2>
+<a name="semantics" class="anchor" href="#semantics"><span class="octicon octicon-link"></span></a>Semantics</h2>
+
+<p>Semantics depend on the solver used. The current reference implementation, <code>org.bomba_lang.proto.NaiveSolver</code>, uses standard
+disjunctive semantics, with the Ferraris and Lifschitz resolution variant for strong negation. To generate all answer sets, use:</p>
+
+<div class="highlight highlight-scala"><pre><span class="n">program</span><span class="o">.</span><span class="n">solve</span>
+</pre></div>
+
+<p>The idiomatic way of interfacing your logic programs with the rest of your code is to define your "oracle" program, and then inject
+the data you wish to provide in the solve method, e.g.:</p>
+
+<div class="highlight highlight-scala"><pre><span class="nd">@bomba</span>
+<span class="k">val</span> <span class="n">oracle</span> <span class="k">=</span> <span class="o">{...}</span>
+<span class="nd">@bomba</span>
+<span class="k">val</span> <span class="n">data</span> <span class="k">=</span> <span class="o">{...}</span>
+<span class="n">oracle</span><span class="o">.</span><span class="n">solve</span><span class="o">(</span><span class="n">data</span><span class="o">)</span>
+</pre></div>
+
+<h2>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
+
+<p>Here's the source from the main class of the <a href="https://github.com/mikkoz/bomba-demo">demo project</a>, to give you an idea of the syntax and semantics:</p>
+
+<div class="highlight highlight-scala"><pre><span class="k">package</span> <span class="nn">org.bomba_lang.bomba_demo</span>
+
+<span class="k">import</span> <span class="nn">org.bomba_lang.proto._</span>
+
+<span class="k">object</span> <span class="nc">Demo</span> <span class="o">{</span>
+
+  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+
+    <span class="nd">@bomba</span>
+    <span class="k">val</span> <span class="n">prog1</span> <span class="k">=</span> <span class="o">{</span> <span class="n">z</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">)</span> <span class="o">}</span>
+
+    <span class="n">println</span><span class="o">(</span><span class="n">prog1</span><span class="o">)</span>
+
+    <span class="nd">@bomba</span>
+    <span class="k">val</span> <span class="n">prog2</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">y</span> <span class="n">v</span> <span class="n">z</span>
+    <span class="o">}</span>
+
+    <span class="n">println</span><span class="o">(</span><span class="n">prog2</span><span class="o">.</span><span class="n">solve</span><span class="o">)</span>
+
+    <span class="nd">@bomba</span>
+    <span class="k">val</span> <span class="n">prog3</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">rain</span> <span class="o">:-</span> <span class="n">wet</span>
+      <span class="n">wet</span>
+    <span class="o">}</span>
+
+    <span class="n">println</span><span class="o">(</span><span class="n">prog3</span><span class="o">.</span><span class="n">solve</span><span class="o">)</span>
+
+    <span class="n">println</span><span class="o">(</span><span class="s">"canonical program extension"</span><span class="o">)</span>
+    <span class="nd">@bomba</span>
+    <span class="k">val</span> <span class="n">r0</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">rain</span> <span class="o">:-</span> <span class="n">wet</span>
+    <span class="o">}</span>
+    <span class="n">println</span><span class="o">(</span><span class="n">r0</span><span class="o">.</span><span class="n">solve</span><span class="o">)</span>
+    <span class="nd">@bomba</span>
+    <span class="k">val</span> <span class="n">r1</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">wet</span>
+    <span class="o">}</span>
+    <span class="n">println</span><span class="o">(</span><span class="n">r0</span><span class="o">.</span><span class="n">solve</span><span class="o">(</span><span class="n">r1</span><span class="o">))</span>
+    <span class="n">println</span><span class="o">(</span><span class="s">"-------------------"</span><span class="o">)</span>
+
+    <span class="n">println</span><span class="o">(</span><span class="s">"canonical program extension with default negation"</span><span class="o">)</span>
+    <span class="nd">@bomba</span>
+    <span class="k">val</span> <span class="n">rn0</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">rain</span> <span class="o">:-</span> <span class="n">wet</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">sprinkler</span>
+    <span class="o">}</span>
+    <span class="n">println</span><span class="o">(</span><span class="n">r0</span><span class="o">.</span><span class="n">solve</span><span class="o">)</span>
+    <span class="nd">@bomba</span>
+    <span class="k">val</span> <span class="n">rn1</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">wet</span>
+    <span class="o">}</span>
+    <span class="n">println</span><span class="o">(</span><span class="n">rn0</span><span class="o">.</span><span class="n">solve</span><span class="o">(</span><span class="n">rn1</span><span class="o">))</span>
+    <span class="nd">@bomba</span>
+    <span class="k">val</span> <span class="n">rn2</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">wet</span>
+      <span class="n">sprinkler</span>
+    <span class="o">}</span>
+    <span class="n">println</span><span class="o">(</span><span class="n">rn0</span><span class="o">.</span><span class="n">solve</span><span class="o">(</span><span class="n">rn2</span><span class="o">))</span>
+    <span class="n">println</span><span class="o">(</span><span class="s">"-------------------"</span><span class="o">)</span>
+
+    <span class="n">println</span><span class="o">(</span><span class="s">"variables"</span><span class="o">)</span>
+    <span class="nd">@bomba</span>
+    <span class="k">val</span> <span class="n">varProg</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">x</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+      <span class="n">y</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>
+      <span class="n">z</span><span class="o">(</span><span class="-Symbol">'X</span><span class="o">,</span> <span class="-Symbol">'Y</span><span class="o">)</span> <span class="o">:-</span> <span class="n">x</span><span class="o">(</span><span class="-Symbol">'X</span><span class="o">)</span> <span class="o">&amp;</span> <span class="n">y</span><span class="o">(</span><span class="-Symbol">'Y</span><span class="o">)</span>
+    <span class="o">}</span>
+    <span class="n">println</span><span class="o">(</span><span class="s">"Ungrounded: "</span> <span class="o">+</span> <span class="n">varProg</span><span class="o">)</span>
+
+    <span class="k">val</span> <span class="n">varProgGround</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">GroundProgram</span><span class="o">(</span><span class="n">varProg</span><span class="o">)</span>
+    <span class="n">println</span><span class="o">(</span><span class="s">"Grounded: "</span> <span class="o">+</span> <span class="n">varProgGround</span><span class="o">)</span>
+    <span class="n">println</span><span class="o">(</span><span class="s">"Result: "</span> <span class="o">+</span> <span class="n">varProgGround</span><span class="o">.</span><span class="n">solve</span><span class="o">)</span>
+    <span class="n">println</span><span class="o">(</span><span class="s">"-------------------"</span><span class="o">)</span>
+
+    <span class="n">println</span><span class="o">(</span><span class="s">"\"Formal\" notation"</span><span class="o">)</span>
+    <span class="nd">@bomba</span>
+    <span class="k">val</span> <span class="n">formalProg</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="n">a</span> <span class="o">∨</span> <span class="n">b</span> <span class="o">⟵</span> <span class="n">x</span> <span class="o">∧</span> <span class="n">y</span> <span class="o">∧</span> <span class="n">z</span>
+    <span class="o">}</span>
+    <span class="n">println</span><span class="o">(</span><span class="n">formalProg</span><span class="o">)</span>
+
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+
+<h2>
+<a name="comments-issues" class="anchor" href="#comments-issues"><span class="octicon octicon-link"></span></a>Comments? Issues?</h2>
+
+<p>All welcome.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Bomba maintained by <a href="https://github.com/mikkoz">mikkoz</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
