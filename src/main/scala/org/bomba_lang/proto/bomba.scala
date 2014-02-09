@@ -97,10 +97,10 @@ object annotImpl {
 
   	  	      //checking for duplicate arities
   	  	      val predCheck = preds.groupBy(_._1)
-  	  	      
+
   	  	      for((pred,arities) <- predCheck) {
   	  	        if(arities.size > 1) {
-  	  	          c.error(toAnnotate.tree.pos, "Predicate "+pred+" has inconsistent arities: "+arities.mkString("(", ",", ")"))
+  	  	          c.abort(toAnnotate.tree.pos, s"Predicate '$pred' has inconsistent arities: ${arities.map(_._2).mkString("(", ",", ")")}")
   	  	        }
   	  	      }
   	  	      
