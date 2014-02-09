@@ -208,7 +208,7 @@ object annotImpl {
 		   )
 		  , TypeTree(
 		   )
-		  , Apply(
+		  ,   Apply(
 		   Ident(
 		    newTermName(
 		     "Literal")
@@ -222,9 +222,13 @@ object annotImpl {
 		     Constant(
 		      false)
 		     )
-		    , Ident(
-		     newTermName(
-		      "args")
+		    , Typed(
+		     Ident(
+		      newTermName(
+		       "args")
+		      )
+		     , Ident(
+		      tpnme.WILDCARD_STAR)
 		     )
 		    )
 		   )
@@ -242,7 +246,7 @@ private[proto] object macroUtils {
    val PARENS = Set(LPAR,RPAR)
 
    /**
-    * Just adds spacing to parens. Use with showRaw for more readibility.
+    * Just adds spacing to parens. Use with showRaw for more readability.
     */
    def showPrint(str: String) {
 	    var expLevel = 0
