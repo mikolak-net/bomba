@@ -18,7 +18,7 @@ object annotImpl {
 	def impl(c: Context)(annottees: c.Expr[Any]*): c.Expr[Any] = {
 	  	import c.universe._
 	  	
-	  	def extractPreds(block: c.universe.Block): Set[(String,Int)] = {
+	  	def extractPreds(mainList: List[c.universe.Tree]): Set[(String,Int)] = {
 	  	  
 	  	  
 	  	  def structureError(cause: Tree) {
@@ -71,7 +71,7 @@ object annotImpl {
 	  	    ret
 	  	  }
 	  	  
-	  	  doExtract(block.children)
+	  	  doExtract(mainList)
 	  	}
 	  	
 	  	if(annottees.size != 1) {
@@ -85,9 +85,9 @@ object annotImpl {
 	  	      
 	  	      //obtain the program to be rewritten
 	  	      val toProcess = rhs match {
-	  	        case b: Block => b
-	  	        case a:Apply => Block(a)
-	  	        case i: Ident => Block(i)
+	  	        case b: Block => b.children
+	  	        case a: Apply => List(a)
+	  	        case i: Ident => List(i)
 	  	        case _ =>  {
 	  	          c.abort(rhs.pos, "A bomba program must be either a single rule or enclosed in a block!")
 	  	        }
@@ -109,7 +109,7 @@ object annotImpl {
   	  	        genLitDef(c)(p)
   	  	      }
 	  	      outList ++= lits
-  	  	      outList ++= toProcess.children
+  	  	      outList ++= List(genProgDef(c)(toProcess.toList))
   	  	      
 	  	      c.Expr[Any](ValDef(mods,name,tpt,Block(outList:_*)))
 	  	    } 
@@ -120,6 +120,22 @@ object annotImpl {
 
 	  	  valDef
 	  	}
+	}
+	
+	private def genProgDef(c: Context)(ruleDefs: List[c.universe.Tree]): c.universe.Tree = {
+	  import c.universe._
+	  
+		Apply(
+		 Select(
+		  New(
+		   Ident(
+		    newTypeName(
+		     "Program")
+		    )
+		   )
+		  , nme.CONSTRUCTOR)
+		 , ruleDefs
+		 )
 	}
 	
 	private def genLitDef(c: Context)(predData: (String,Int)) = {
