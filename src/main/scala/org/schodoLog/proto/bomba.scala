@@ -1,0 +1,248 @@
+package org.schodoLog.proto
+
+import scala.language.experimental.macros
+import scala.reflect.macros.Context
+import scala.annotation.StaticAnnotation
+
+object annotImpl {
+  
+	/**
+	 * Contains all symbol strings required for analysis.
+	 */
+	private val OPERATORS = Set("v","$u2228"/* == ∨ */,"$bar","$amp","$colon$minus","$u27F5"/* == ⟵ */,"unary_$tilde","unary_$minus")
+  
+  
+	def impl(c: Context)(annottees: c.Expr[Any]*): c.Expr[Any] = {
+	  	import c.universe._
+	  	
+	  	def extractPreds(block: c.universe.Block): Set[(String,Int)] = {
+	  	  
+	  	  
+	  	  def structureError(cause: Tree) {
+	  	    c.abort(cause.pos,"Unrecognized bomba program structure!")
+	  	  }
+	  	  
+	  	  
+	  	  def doExtract(treeList: List[c.universe.Tree]): Set[(String,Int)] = {
+	  	    var ret = Set[(String,Int)]()
+	  	    
+	  	    for(elem <- treeList) {
+	  	      elem match {
+	  	        case i: Ident => {
+	  	          //a simple case, e.g. for facts
+	  	          ret += ((i.name.decoded,0))
+	  	        }
+	  	        case a: Apply => {
+	  	           //Apply is *never* used for operators, only Select 
+	  	          
+  	              a.fun match {
+  	                case n:Ident => {
+  	                  //this is a predicate - any child Applies and Selects are actual function calls/field refs
+  	                  ret += ((n.name.toString(),a.args.size))
+  	                }
+  	                case s:Select => {
+  	                  if(a.args.size != 1) {
+  	                    structureError(a)
+  	                  }
+  	                  ret ++= doExtract(List(a.args(0)))
+  	                  ret ++= doExtract(List(s))
+  	                }
+  	                case _ => structureError(a.fun)
+  	              }
+	  	        }
+	  	        case s: Select => {
+	  	          if(OPERATORS.contains(s.name.toString())) {
+	  	            ret ++= doExtract(s.children)
+	  	          } else {
+	  	            ret += ((s.name.toString(),0))
+	  	            ret ++= (s.qualifier match {
+	  	              case a: Apply => doExtract(List(a))
+	  	              case _ => Set()
+	  	            })
+	  	          }
+	  	        }
+	  	        case _ => structureError(elem)
+	  	      }
+	  	    }
+	  	    
+	  	    ret
+	  	  }
+	  	  
+	  	  doExtract(block.children)
+	  	}
+	  	
+	  	if(annottees.size != 1) {
+	  	  c.error(c.enclosingPosition,"bomba programs should be annotated separately (1 def per annotation).")
+	  	  c.Expr[Any](null)
+	  	} else {
+	  	  val toAnnotate = annottees(0)
+	  	  
+	  	  val valDef = toAnnotate.tree match {
+	  	    case ValDef(mods, name, tpt, rhs) => {
+	  	      
+	  	      //obtain the program to be rewritten
+	  	      val toProcess = rhs match {
+	  	        case b: Block => b
+	  	        case a:Apply => Block(a)
+	  	        case i: Ident => Block(i)
+	  	        case _ =>  {
+	  	          c.abort(rhs.pos, "A bomba program must be either a single rule or enclosed in a block!")
+	  	        }
+	  	      }  
+	  	      
+  	  	      val preds = extractPreds(toProcess)
+
+  	  	      //checking for duplicate arities
+  	  	      val predCheck = preds.groupBy(_._1)
+  	  	      
+  	  	      for((pred,arities) <- predCheck) {
+  	  	        if(arities.size > 1) {
+  	  	          c.error(toAnnotate.tree.pos, "Predicate "+pred+" has inconsistent arities: "+arities.mkString("(", ",", ")"))
+  	  	        }
+  	  	      }
+  	  	      
+  	  	      var outList = List[Tree]()
+  	  	      val lits = for(p <- preds) yield {
+  	  	        genLitDef(c)(p)
+  	  	      }
+	  	      outList ++= lits
+  	  	      outList ++= toProcess.children
+  	  	      
+	  	      c.Expr[Any](ValDef(mods,name,tpt,Block(outList:_*)))
+	  	    } 
+	  	    case _ => {
+	  	      c.abort(toAnnotate.tree.pos, "only vals can be bomba programs")
+	  	    }
+	  	  }
+
+	  	  valDef
+	  	}
+	}
+	
+	private def genLitDef(c: Context)(predData: (String,Int)) = {
+	  import c.universe._
+	  
+	  val (name,arity) = predData
+	  
+	  if(arity == 0) {
+	     DefDef(
+			  Modifiers(
+			   )
+			  , newTermName(
+			   name)
+			  , List(
+			   )
+			  , List(
+			   )
+			  , TypeTree(
+			   )
+			  , Apply(
+			   Ident(
+			    newTermName(
+			     "Literal")
+			    )
+			   , List(
+			    Literal(
+			     Constant(
+			      name)
+			     )
+			    , Literal(
+			     Constant(
+			      false)
+			     )
+			    )
+			   )
+		)
+	  } else {
+	     DefDef(
+		  Modifiers(
+		   )
+		  , newTermName(
+		   name)
+		  , List(
+		   )
+		  , List(
+		   List(
+		    ValDef(
+		     Modifiers(
+		      Flag.PARAM)
+		     , newTermName(
+		      "args")
+		     , AppliedTypeTree(
+		      Select(
+		       Select(
+		        Ident(
+		         nme.ROOTPKG)
+		        ,c.mirror.staticPackage("scala"))
+		       , newTypeName(
+		        "<repeated>")
+		       )
+		      , List(
+		       Ident(
+		        newTypeName(
+		         "Any")
+		        )
+		       )
+		      )
+		     , EmptyTree)
+		    )
+		   )
+		  , TypeTree(
+		   )
+		  , Apply(
+		   Ident(
+		    newTermName(
+		     "Literal")
+		    )
+		   , List(
+		    Literal(
+		     Constant(
+		      name)
+		     )
+		    , Literal(
+		     Constant(
+		      false)
+		     )
+		    , Ident(
+		     newTermName(
+		      "args")
+		     )
+		    )
+		   )
+		  )
+	  }
+	}
+	
+}
+
+private[proto] object macroUtils {
+   val LPAR = '('
+	  
+   val RPAR = ')'
+  
+   val PARENS = Set(LPAR,RPAR)
+
+   /**
+    * Just adds spacing to parens. Use with showRaw for more readibility.
+    */
+   def showPrint(str: String) {
+	    var expLevel = 0
+	
+	    for (char <- str) {
+	      val mod = if (PARENS.contains(char)) {
+	        if (char == LPAR) {
+	          1
+	        } else { //RPAR
+	          -1
+	        }
+	      } else { 0 }
+	      expLevel += mod
+	      print(char)
+	      if (mod != 0) {
+	        println()
+	        print((1 to expLevel).map(_ => " ").mkString(""))
+	      }
+	    }
+	    println()
+	}
+}

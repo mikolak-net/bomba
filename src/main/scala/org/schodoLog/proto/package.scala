@@ -4,6 +4,8 @@ import org.schodoLog.proto.AtomContainer
 import org.schodoLog.proto.Literal
 import org.schodoLog.proto.Rule
 import scala.language.dynamics
+import scala.language.experimental.macros
+import scala.annotation.StaticAnnotation
 
 package object proto {
   
@@ -23,18 +25,14 @@ package object proto {
 	 * Implicit conversion method for Program's constructor, to allow for facts.
 	 */
 	implicit def Atom2Rule(atom: Literal) = atom:-()
-	
-	object p extends AnyRef with Dynamic {
-	  
-	    /**
-	     * for preventing any2Ensuring and any2ArrowAssoc implicit conversions from Predef
-	     */
-		def x = applyDynamic("x")()
-	  
-		def selectDynamic(predName: String): Literal = new Literal(predName)
-	  
-		def applyDynamic(predName: String)(args: Any*): Literal = new Literal(predName)(args : _*)
+
+	/**
+	 * Use this annotation on a val to instantiate a program.
+	 */
+	class bomba extends StaticAnnotation {
+		def macroTransform(annottees: Any*) = macro annotImpl.impl
 	}
+
 	
 	/**
 	 * Syntactic sugar for constraints.
@@ -76,4 +74,23 @@ package object proto {
   def extractVars(litSet: Set[Literal]): Set[Variable] = {
       litSet.flatMap(_.terms.filter(_.isInstanceOf[Variable])).toSet.asInstanceOf[Set[Variable]]
   }
+  
+  
+  	/**
+	 * This is now only used for tests and other invocation within this package.
+	 * The reason why this is still necessary is the fact that macro annotations 
+	 * can't be used within "their" project - the only alternative would be to split 
+	 * the tests into a separate project (which might not be such a bad idea).
+	 */
+	private[proto] object p extends AnyRef with Dynamic {
+	  
+	    /**
+	     * for preventing any2Ensuring and any2ArrowAssoc implicit conversions from Predef
+	     */
+		def x = applyDynamic("x")()
+	  
+		def selectDynamic(predName: String): Literal = new Literal(predName)
+	  
+		def applyDynamic(predName: String)(args: Any*): Literal = new Literal(predName)(args : _*)
+	}
 }
