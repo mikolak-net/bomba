@@ -130,7 +130,7 @@ object annotImpl {
 		  New(
 		   Ident(
 		    newTypeName(
-		     "Program")
+		     "Program") //TODO: make this compile-time safe
 		    )
 		   )
 		  , nme.CONSTRUCTOR)
@@ -158,7 +158,7 @@ object annotImpl {
 			  , Apply(
 			   Ident(
 			    newTermName(
-			     "Literal")
+			     "Literal") //TODO: make this compile-time safe
 			    )
 			   , List(
 			    Literal(
