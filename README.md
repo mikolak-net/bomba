@@ -1,7 +1,7 @@
-**schodoLog** *[s-HOD-o-LOG]* - a prototype Answer Set Programming Scala DSL
+**bomba** - a prototype Answer Set Programming Scala DSL
 =====================================================================
 
-SchodoLog is an [Answer Set Programming](https://en.wikipedia.org/wiki/Answer_set_programming) dialect in the form of a Scala DSL. It is intended, currently, as a prototype to experiment with possible syntax and semantic variants, as well as language integration.
+Bomba is an [Answer Set Programming](https://en.wikipedia.org/wiki/Answer_set_programming) dialect in the form of a Scala DSL. It is intended, currently, as a prototype to experiment with possible syntax and semantic variants, as well as language integration.
 
 Usage
 ----------
@@ -9,11 +9,11 @@ Usage
  1. 
    - If your build system is m2-compatible:
      1. `mvn clean install`
-     1. Add org.schodoLog:schodoLog to your dependencies.
+     1. Add org.bomba_lang:bomba_lang to your dependencies.
    - Otherwise:
      1. `mvn clean package`
  	   1. Add the resulting JAR to the build path of your project.
- 1. Add: `import org.schodoLog.proto._` to your Scala import statements.
+ 1. Add: `import org.bomba_lang.proto._` to your Scala import statements.
 
 
 Syntax
@@ -52,7 +52,7 @@ where `r1,...,rn` are rules.
 
 Semantics
 ------------
-Semantics depend on the solver used. The current reference implementation, `org.schodoLog.proto.NaiveSolver`, uses standard
+Semantics depend on the solver used. The current reference implementation, `org.bomba_lang.proto.NaiveSolver`, uses standard
 disjunctive semantics, with the Ferraris and Lifschitz resolution variant for strong negation. To generate all answer sets, use:
 
 ```scala
@@ -71,7 +71,7 @@ Examples
 -----------
 
 ```scala
-import org.schodoLog.proto._   //imports the required implicits and the "magic" p object
+import org.bomba_lang.proto._   //imports the required implicits and the "magic" p object
 
 new Program(
    p.y v p.x
@@ -98,7 +98,7 @@ new Program(
 ).solve                                           //>Set(Set(p1(a), p1(b), p2(a), p2(b)))
 ```
 
-For more examples, help yourself to the Worksheet `playground.sc` in the `org.schodoLog.playground` package. 
+For more examples, help yourself to the Worksheet `playground.sc` in the `org.bomba_lang.playground` package. 
 
 Comments? Issues?
 ------------

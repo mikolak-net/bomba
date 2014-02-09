@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.schodoLog</groupId>
-	<artifactId>schodoLog</artifactId>
+	<groupId>org.bomba_lang</groupId>
+	<artifactId>bomba</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>schodoLog</name>
+	<name>bomba</name>
 	<description>A simple Scala DSL for Answer Set Programming</description>
 	<inceptionYear>2013</inceptionYear>
 	<licenses>

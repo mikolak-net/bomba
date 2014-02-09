@@ -1,4 +1,4 @@
-package org.schodoLog.proto
+package org.bomba_lang.proto
 
 /**
  * General trait for logic programming solvers, base for any custom implementations.

@@ -1,8 +1,11 @@
-package org.schodoLog
+package org.bomba_lang
 
-import org.schodoLog.proto.AtomContainer
-import org.schodoLog.proto.Literal
-import org.schodoLog.proto.Rule
+import org.bomba_lang.proto.Literal;
+import org.bomba_lang.proto.NaiveSolver;
+import org.bomba_lang.proto.Rule;
+import org.bomba_lang.proto.annotImpl;
+import org.bomba_lang.proto.AtomContainer
+
 import scala.language.dynamics
 import scala.language.experimental.macros
 import scala.annotation.StaticAnnotation
@@ -82,7 +85,7 @@ package object proto {
 	 * can't be used within "their" project - the only alternative would be to split 
 	 * the tests into a separate project (which might not be such a bad idea).
 	 */
-	private[proto] object p extends AnyRef with Dynamic {
+	private[bomba_lang] object p extends AnyRef with Dynamic {
 	  
 	    /**
 	     * for preventing any2Ensuring and any2ArrowAssoc implicit conversions from Predef

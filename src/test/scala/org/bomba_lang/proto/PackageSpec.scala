@@ -1,8 +1,8 @@
-package org.schodoLog.proto
+package org.bomba_lang.proto
 
 import org.scalatest.matchers.MustMatchers
 import org.scalatest.FlatSpec
-import org.schodoLog.proto._;
+import org.bomba_lang.proto._;
 
 class PackageSpec extends FlatSpec with MustMatchers {
   "Permutations " must "not accept length smaller than 0" in {

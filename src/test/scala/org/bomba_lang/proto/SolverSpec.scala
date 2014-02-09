@@ -1,8 +1,8 @@
-package org.schodoLog.proto
+package org.bomba_lang.proto
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.MustMatchers
-
+ 
 abstract class SolverSpec extends FlatSpec with MustMatchers{
 
   def groundSolver(solver: Solver) = {

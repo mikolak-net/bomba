@@ -1,4 +1,4 @@
-package org.schodoLog.proto
+package org.bomba_lang.proto
 
 import scala.language.experimental.macros
 import scala.reflect.macros.Context
@@ -9,7 +9,10 @@ object annotImpl {
 	/**
 	 * Contains all symbol strings required for analysis.
 	 */
-	private val OPERATORS = Set("v","$u2228"/* == ∨ */,"$bar","$amp","$colon$minus","$u27F5"/* == ⟵ */,"unary_$tilde","unary_$minus")
+	private val OPERATORS = Set(
+								"v","$u2228"/* == ∨ */,"$bar","$amp","$colon$minus","$u27F5"/* == ⟵ */,
+								"unary_$tilde","unary_$minus"
+								)
   
   
 	def impl(c: Context)(annottees: c.Expr[Any]*): c.Expr[Any] = {

@@ -1,4 +1,4 @@
-package org.schodoLog.proto
+package org.bomba_lang.proto
 
 class NaiveSolverSpec extends SolverSpec {
 

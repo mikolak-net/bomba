@@ -1,4 +1,5 @@
-package org.schodoLog.proto
+package org.bomba_lang.proto
+
 
 /**
  * Main logic program entry point.

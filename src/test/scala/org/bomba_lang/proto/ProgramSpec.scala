@@ -1,7 +1,8 @@
-package org.schodoLog.proto
+package org.bomba_lang.proto
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.MustMatchers
+import org.bomba_lang.proto._
 
 class ProgSpec extends FlatSpec with MustMatchers {
 
