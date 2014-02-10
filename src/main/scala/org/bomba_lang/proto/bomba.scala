@@ -3,6 +3,7 @@ package org.bomba_lang.proto
 import scala.language.experimental.macros
 import scala.reflect.macros.Context
 import scala.annotation.StaticAnnotation
+import scala.collection.mutable.ListBuffer
 
 object annotImpl {
   
@@ -130,7 +131,7 @@ object annotImpl {
 		  New(
 		   Ident(
 		    newTypeName(
-		     "Program") //TODO: make this compile-time safe
+		     classOf[Program].getSimpleName())
 		    )
 		   )
 		  , nme.CONSTRUCTOR)
@@ -143,97 +144,76 @@ object annotImpl {
 	  
 	  val (name,arity) = predData
 	  
-	  if(arity == 0) {
-	     DefDef(
-			  Modifiers(
-			   )
-			  , newTermName(
-			   name)
-			  , List(
-			   )
-			  , List(
-			   )
-			  , TypeTree(
-			   )
-			  , Apply(
-			   Ident(
-			    newTermName(
-			     "Literal") //TODO: make this compile-time safe
-			    )
-			   , List(
-			    Literal(
-			     Constant(
-			      name)
-			     )
-			    , Literal(
-			     Constant(
-			      false)
-			     )
-			    )
-			   )
-		)
-	  } else {
-	     DefDef(
+      DefDef(
 		  Modifiers(
 		   )
 		  , newTermName(
 		   name)
 		  , List(
 		   )
-		  , List(
-		   List(
-		    ValDef(
-		     Modifiers(
-		      Flag.PARAM)
-		     , newTermName(
-		      "args")
-		     , AppliedTypeTree(
-		      Select(
-		       Select(
-		        Ident(
-		         nme.ROOTPKG)
-		        ,c.mirror.staticPackage("scala"))
-		       , newTypeName(
-		        "<repeated>")
-		       )
-		      , List(
-		       Ident(
-		        newTypeName(
-		         "Any")
-		        )
-		       )
-		      )
-		     , EmptyTree)
-		    )
-		   )
+		  , if(arity == 0) {
+			  List()
+		    } else { //wildcard arg definition
+		      List(
+			   List(
+			    ValDef(
+			     Modifiers(
+			      Flag.PARAM)
+			     , newTermName(
+			      "args")
+			     , AppliedTypeTree(
+			      Select(
+			       Select(
+			        Ident(
+			         nme.ROOTPKG)
+			        ,c.mirror.staticPackage("scala"))
+			       , newTypeName(
+			        "<repeated>")
+			       )
+			      , List(
+			       Ident(
+			        newTypeName(
+			         "Any")
+			        )
+			       )
+			      )
+			     , EmptyTree)
+			    )
+			   )
+		    } 
 		  , TypeTree(
 		   )
-		  ,   Apply(
+		  , Apply(
 		   Ident(
 		    newTermName(
-		     "Literal")
+		     classOf[org.bomba_lang.proto.Literal].getSimpleName())
 		    )
-		   , List(
-		    Literal(
-		     Constant(
-		      name)
-		     )
-		    , Literal(
-		     Constant(
-		      false)
-		     )
-		    , Typed(
-		     Ident(
-		      newTermName(
-		       "args")
-		      )
-		     , Ident(
-		      tpnme.WILDCARD_STAR)
-		     )
-		    )
-		   )
+		  , {
+				 var argList = ListBuffer[Tree](
+								    Literal(
+								     Constant(
+								      name)
+								     )
+								    , Literal(
+								     Constant(
+								      false)
+								     )
+								    )
+			     //wildcard arg indirection to bomba Literal construction method
+			     if(arity > 0) {
+			       argList += Typed(
+							     Ident(
+							      newTermName(
+							       "args")
+							      )
+							     , Ident(
+							      tpnme.WILDCARD_STAR)
+							     )
+			     }
+				 argList.toList
+		   }
 		  )
-	  }
+      )
 	}
 	
 }
