@@ -9,7 +9,7 @@ Usage
  1. 
    - If your build system is m2-compatible:
      1. `mvn clean install`
-     1. Add org.bomba_lang:bomba_lang to your dependencies.
+     1. Add org.bomba-lang:bomba to your dependencies.
    - Otherwise:
      1. `mvn clean package`
  	   1. Add the resulting JAR to the build path of your project.
