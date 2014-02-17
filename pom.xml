@@ -8,7 +8,7 @@
 	<name>bomba</name>
 	<description>A simple Scala DSL for Answer Set Programming</description>
 	<url>http://bomba-lang.org</url>
-	
+
 	<licenses>
 		<license>
 			<name>BSD 3-clause &quot;New&quot; or &quot;Revised&quot; License</name>
@@ -17,11 +17,11 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:https://github.com/mikkoz/bomba.git</connection>
-		<developerConnection>scm:git:https://github.com/mikkoz/bomba.git</developerConnection>
-		<url>https://github.com/mikkoz/bomba.git</url>
+		<connection>scm:git:https://github.com/mikkoz/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:https://github.com/mikkoz/${project.artifactId}.git</developerConnection>
+		<url>https://github.com/mikkoz/${project.artifactId}.git</url>
 	</scm>
-	
+
 	<developers>
 		<developer>
 			<name>Mikołaj Koziarkiewicz</name>
@@ -34,14 +34,16 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<encoding>UTF-8</encoding>
 		<scala.version>2.10.3</scala.version>
+
+		<javadoc.output>${project.build.directory}/genjavadoc</javadoc.output>
 	</properties>
 
 	<repositories> <!-- necessary for macro-paradise plugin -->
-	   <repository>
-	     <id>oss.sonatype.org</id>
-	      <name>sonatype sapshots</name>
-	      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-	    </repository>
+		<repository>
+			<id>oss.sonatype.org</id>
+			<name>sonatype sapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -106,17 +108,23 @@
 						</goals>
 						<configuration>
 							<args>
+								<arg>-P:genjavadoc:out=${javadoc.output}</arg>
 								<arg>-make:transitive</arg>
 								<arg>-dependencyfile</arg>
 								<arg>${project.build.directory}/.scala_dependencies</arg>
 							</args>
-					        <compilerPlugins>
-					          <compilerPlugin>
-					            <groupId>org.scala-lang.plugins</groupId>
-					            <artifactId>macro-paradise_${scala.version}</artifactId>
-					            <version>2.0.0-SNAPSHOT</version>
-					          </compilerPlugin>
-					        </compilerPlugins> 							
+							<compilerPlugins>
+								<compilerPlugin>
+									<groupId>org.scala-lang.plugins</groupId>
+									<artifactId>macro-paradise_${scala.version}</artifactId>
+									<version>2.0.0-SNAPSHOT</version>
+								</compilerPlugin>
+								<compilerPlugin>
+									<groupId>com.typesafe.genjavadoc</groupId>
+									<artifactId>genjavadoc-plugin_${scala.version}</artifactId>
+									<version>0.5</version>
+								</compilerPlugin>
+							</compilerPlugins>
 						</configuration>
 					</execution>
 				</executions>
@@ -134,6 +142,57 @@
 						<id>test</id>
 						<goals>
 							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${javadoc.output}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<minmemory>64m</minmemory>
+					<maxmemory>2g</maxmemory>
+					<outputDirectory>${project.build.directory}</outputDirectory>
+					<detectLinks>true</detectLinks>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>test-jar-no-fork</goal>
+							<goal>jar-no-fork</goal>
 						</goals>
 					</execution>
 				</executions>
