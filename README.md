@@ -9,38 +9,42 @@ Usage
  1. 
    - If your build system is m2-compatible:
      1. Add the Sonatype-OSS repo (full release coming soon) :
-      - SBT: 
-     ```scala
-     resolvers += "sonatype sapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-     ``` 
-      - Maven:
-     ```xml
+       - SBT:
+	    ```scala
+	    resolvers += "sonatype sapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+	    ``` 
+        - Maven:
+	     ```xml
 		<dependency>
 			<groupId>org.bomba-lang</groupId>
 			<artifactId>bomba</artifactId>
 			<version>0.3.0-SNAPSHOT</version>
 		</dependency>
-	```
-     1. Add to your dependencies.
-      - SBT: 
-     ```scala
-     libraryDependencies += org.bomba-lang % bomba % 0.3.0-SNAPSHOT
-     ``` 
-      - Maven:
-     ```xml
-	   <repository>
-	     <id>oss.sonatype.org</id>
-	      <name>sonatype sapshots</name>
-	      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		```
+     1. Add to your dependencies:
+	      - SBT: 
+	     ```scala
+	     libraryDependencies += org.bomba-lang % bomba % 0.3.0-SNAPSHOT
+	     ``` 
+	      - Maven:
+	     ```xml
+	    <repository>
+		    <id>oss.sonatype.org</id>
+		    <name>sonatype sapshots</name>
+		    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
 	    </repository>
-	```
+		```
       
    - Otherwise:
      1. `mvn clean package`
- 	   1. Add the resulting JAR to the build path of your project.
- 1. Add: `import org.bomba_lang.proto._` to your Scala import statements.
- 1. Add the `macro-paradise` compiler plugin to your Maven/SBT build - as described in [the macro documentation](http://docs.scala-lang.org/overviews/macros/paradise.html). 
+ 	 1. Add the resulting JAR to the build path of your project.
+ 1. Add:
+      ```scala
 
+      import org.bomba_lang.proto._
+      ``` 
+    to your Scala import statements.
+ 1. Add the `macro-paradise` compiler plugin to your Maven/SBT build - as described in [the macro documentation](http://docs.scala-lang.org/overviews/macros/paradise.html). 
 
 Syntax
 -----------
