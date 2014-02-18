@@ -95,6 +95,33 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>release-version</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.4</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<build>
@@ -175,7 +202,7 @@
 				<version>2.9</version>
 				<executions>
 					<execution>
-						<phase>install</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>jar</goal>
 						</goals>
@@ -194,7 +221,7 @@
 				<version>2.2.1</version>
 				<executions>
 					<execution>
-						<phase>install</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>test-jar-no-fork</goal>
 							<goal>jar-no-fork</goal>
