@@ -24,14 +24,14 @@ Usage
      1. Add to your dependencies:
 	      - SBT: 
 	     ```scala
-	     libraryDependencies += org.bomba-lang % bomba % 0.3.0-SNAPSHOT
+	     libraryDependencies += org.bomba-lang % bomba % 0.3.1-SNAPSHOT
 	     ``` 
 	      - Maven:
 	     ```xml
 		<dependency>
 			<groupId>org.bomba-lang</groupId>
 			<artifactId>bomba</artifactId>
-			<version>0.3.0-SNAPSHOT</version>
+			<version>0.3.1-SNAPSHOT</version>
 		</dependency>	     
 		```
    - Otherwise:
