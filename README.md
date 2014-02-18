@@ -34,7 +34,6 @@ Usage
 		    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
 	    </repository>
 		```
-      
    - Otherwise:
      1. `mvn clean package`
  	 1. Add the resulting JAR to the build path of your project.
