@@ -14,6 +14,10 @@ object annotImpl {
 								"v","$u2228"/* == ∨ */,"$bar","$amp","$colon$minus","$u27F5"/* == ⟵ */,
 								"unary_$tilde","unary_$minus"
 								)
+	/**
+	 * Contains all restricted literal names - will not be shadowed with Literal definitions.
+	 */							
+	private val RESTRICTED_NAMES = Set("Nil","$u22A5"/* == ⊥ */)
   
   
 	def impl(c: Context)(annottees: c.Expr[Any]*): c.Expr[Any] = {
@@ -34,7 +38,10 @@ object annotImpl {
 	  	      elem match {
 	  	        case i: Ident => {
 	  	          //a simple case, e.g. for facts
-	  	          ret += ((i.name.decoded,0))
+	  	          val identName = i.name.decoded
+	  	          if(!RESTRICTED_NAMES.contains(identName)) {
+	  	        	  ret += ((identName,0))
+	  	          }
 	  	        }
 	  	        case a: Apply => {
 	  	           //Apply is *never* used for operators, only Select 

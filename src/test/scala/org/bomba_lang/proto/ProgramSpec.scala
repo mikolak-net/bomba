@@ -89,7 +89,7 @@ class ProgSpec extends FlatSpec with Matchers {
 
     val a2 = p.b
 
-    :-(p.a, ~p.b).body should be(Set(a1, a2))
+    (Nil :-(p.a, ~p.b)).body should be(Set(a1, a2))
   }
 
   val testPosRule = p.m :- p.a

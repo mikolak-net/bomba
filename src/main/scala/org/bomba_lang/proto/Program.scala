@@ -58,8 +58,6 @@ class Program(val rules: Rule*) extends Validating {
 
 class GroundProgram(val program: Program) extends Program({
   
-
-  
   //set of all constants in the program
   val herbrandUniverse = program.rules.flatMap((r) => r.head ++ r.body).flatMap(_.terms).filter(!_.isInstanceOf[Variable]).toSet
 
@@ -118,7 +116,7 @@ case class Rule(val head: Set[Literal],val posBody: Set[Literal],val negBody: Se
   }
   
   override def toString() = {
-    head.mkString(" ∨ ") + (if(body.isEmpty) "" else " ⟵  "+(posBody.map(_.toString)++negBody.map("not "+_.toString) ).mkString(" ∧ ") )+"."
+    (if(head.isEmpty) "⊥" else  head.mkString(" ∨ ")) + (if(body.isEmpty) "" else " ⟵  "+(posBody.map(_.toString)++negBody.map("not "+_.toString) ).mkString(" ∧ ") )+"."
   }
   
 }
@@ -128,7 +126,14 @@ case class Rule(val head: Set[Literal],val posBody: Set[Literal],val negBody: Se
 /**
  * Special Rule variant, exists only to prevent rules of the form p"x" :- p"y" :- p"z" .
  */
-class BodilesRule(override val head: Set[Literal]) extends Rule(head,Set(),Set()) with DisjunctiveImplicative {
+protected class ConstraintRule(override val head: Set[Literal]) extends Rule(head,Set(),Set()) with Implicative {
+
+}
+
+/**
+ * Special Rule variant, same reason as Contraint Rule but allows for multiple head elements
+ */
+protected class BodilesRule(override val head: Set[Literal]) extends ConstraintRule(head) with DisjunctiveImplicative {
   
   protected def or(addAtom: Literal) =  new BodilesRule(head + addAtom)
 
@@ -199,12 +204,11 @@ trait Validating {
   
 }
 
-
 /**
- * "Worker" trait for head elements of rules, adding the necessary functional syntax
- * to compose a rule.
+ * "Worker" trait for head parts of a rule, specialized specifically to facilitate 
+ * constraints.
  */
-trait DisjunctiveImplicative {
+trait Implicative {
   
   /**
    * All atoms in the head of this rule element.
@@ -212,21 +216,29 @@ trait DisjunctiveImplicative {
   def getHead: Set[Literal]
   
   /**
-   * Parent method for head composition.
-   */
-  protected def or(newAtom: Literal): BodilesRule
-
-  /**
    * Parent method for head -> body append.
    */
   protected def implies(body: AtomContainer*): Rule = new Rule(getHead,body)
   
+  def :-(body: AtomContainer*) = implies(body: _*)
+  def ⟵(body: AtomContainer*) = implies(body: _*)
+}
+
+/**
+ * "Worker" trait for head elements of rules, adding the necessary functional syntax
+ * to compose a rule.
+ */
+trait DisjunctiveImplicative extends Implicative {
+  
+  /**
+   * Parent method for head composition.
+   */
+  protected def or(newAtom: Literal): BodilesRule
+  
   def v(newAtom: Literal) = or(newAtom)
   def ∨(newAtom: Literal) = or(newAtom) //this is the LOGICAL OR Unicode sign, for non-eagle-eyed
   def |(newAtom: Literal) = or(newAtom) //TODO: is this really a good idea for an alternative?
-  
-  def :-(body: AtomContainer*) = implies(body: _*)
-  def ⟵(body: AtomContainer*) = implies(body: _*)
+
 }
 
 /**

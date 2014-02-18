@@ -28,6 +28,11 @@ package object proto {
 	 * Implicit conversion method for Program's constructor, to allow for facts.
 	 */
 	implicit def Atom2Rule(atom: Literal) = atom:-()
+	
+	/**
+	 * Implicit conversion for constraints.
+	 */
+	implicit def Nil2Rule(nil: Nil.type) = new ConstraintRule(Set())
 
 	/**
 	 * Use this annotation on a val to instantiate a program.
@@ -47,6 +52,8 @@ package object proto {
 	def :-(rule: Rule) = rule
 
 	def ⟵(rule: Rule) = :-(rule)
+	
+	val ⊥ = Nil
 	
 	/**
 	 * Generates all possible permutations (with replacement) of <code>items</code>
