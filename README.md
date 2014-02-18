@@ -15,11 +15,11 @@ Usage
 	    ``` 
         - Maven:
 	     ```xml
-		<dependency>
-			<groupId>org.bomba-lang</groupId>
-			<artifactId>bomba</artifactId>
-			<version>0.3.0-SNAPSHOT</version>
-		</dependency>
+	    <repository>
+		    <id>oss.sonatype.org</id>
+		    <name>sonatype sapshots</name>
+		    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+	    </repository>
 		```
      1. Add to your dependencies:
 	      - SBT: 
@@ -28,11 +28,11 @@ Usage
 	     ``` 
 	      - Maven:
 	     ```xml
-	    <repository>
-		    <id>oss.sonatype.org</id>
-		    <name>sonatype sapshots</name>
-		    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-	    </repository>
+		<dependency>
+			<groupId>org.bomba-lang</groupId>
+			<artifactId>bomba</artifactId>
+			<version>0.3.0-SNAPSHOT</version>
+		</dependency>	     
 		```
    - Otherwise:
      1. `mvn clean package`
