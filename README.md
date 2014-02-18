@@ -8,8 +8,33 @@ Usage
 
  1. 
    - If your build system is m2-compatible:
-     1. `mvn clean install`
-     1. Add org.bomba-lang:bomba to your dependencies.
+     1. Add the Sonatype-OSS repo (full release coming soon) :
+      - SBT: 
+     ```scala
+     resolvers += "sonatype sapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+     ``` 
+      - Maven:
+     ```xml
+		<dependency>
+			<groupId>org.bomba-lang</groupId>
+			<artifactId>bomba</artifactId>
+			<version>0.3.0-SNAPSHOT</version>
+		</dependency>
+	```
+     1. Add to your dependencies.
+      - SBT: 
+     ```scala
+     libraryDependencies += org.bomba-lang % bomba % 0.3.0-SNAPSHOT
+     ``` 
+      - Maven:
+     ```xml
+	   <repository>
+	     <id>oss.sonatype.org</id>
+	      <name>sonatype sapshots</name>
+	      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+	    </repository>
+	```
+      
    - Otherwise:
      1. `mvn clean package`
  	   1. Add the resulting JAR to the build path of your project.
