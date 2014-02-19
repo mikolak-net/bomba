@@ -30,7 +30,7 @@ Usage
       import org.bomba_lang.proto._
       ``` 
     to your Scala import statements.
- 1. Add the `macro-paradise` compiler plugin to your Maven/SBT build - as described in [the macro documentation](http://docs.scala-lang.org/overviews/macros/paradise.html). 
+ 1. **IMPORTANT:** add the `macro-paradise` compiler plugin to your Maven/SBT build - as described in [the macro documentation](http://docs.scala-lang.org/overviews/macros/paradise.html). 
 
 Syntax
 -----------
