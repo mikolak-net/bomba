@@ -44,46 +44,24 @@
 <li>
 
 <ul>
-<li>If your build system is m2-compatible:
-
-<ol>
-<li>Add the Sonatype-OSS repo (full release coming soon) :
-
-<ul>
-<li>SBT:</li>
-</ul>
-<div class="highlight highlight-scala"><pre><span class="n">resolvers</span> <span class="o">+=</span> <span class="s">"sonatype sapshots"</span> <span class="n">at</span> <span class="s">"https://oss.sonatype.org/content/repositories/snapshots"</span>
-</pre></div>
-
-<ul>
-<li>Maven:</li>
-</ul>
-<div class="highlight highlight-xml"><pre><span class="nt">&lt;repository&gt;</span>
-    <span class="nt">&lt;id&gt;</span>oss.sonatype.org<span class="nt">&lt;/id&gt;</span>
-    <span class="nt">&lt;name&gt;</span>sonatype sapshots<span class="nt">&lt;/name&gt;</span>
-    <span class="nt">&lt;url&gt;</span>https://oss.sonatype.org/content/repositories/snapshots<span class="nt">&lt;/url&gt;</span>
-<span class="nt">&lt;/repository&gt;</span>
-</pre></div>
-</li>
-<li>Add to your dependencies:
+<li>If your build system is m2-compatible, <a href="http://search.maven.org/#artifactdetails%7Corg.bomba-lang%7Cbomba%7C0.3.1%7Cjar">you can now get <em>bomba</em> directly out of Central</a>.
+Just add it to your dependencies:
 
 <ul>
 <li>SBT: </li>
 </ul>
-<div class="highlight highlight-scala"><pre><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="n">org</span><span class="o">.</span><span class="n">bomba</span><span class="o">-</span><span class="n">lang</span> <span class="o">%</span> <span class="n">bomba</span> <span class="o">%</span> <span class="mf">0.3</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="nc">SNAPSHOT</span>
+<div class="highlight highlight-scala"><pre><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="n">org</span><span class="o">.</span><span class="n">bomba</span><span class="o">-</span><span class="n">lang</span> <span class="o">%</span> <span class="n">bomba</span> <span class="o">%</span> <span class="mf">0.3</span><span class="o">.</span><span class="mi">1</span>
 </pre></div>
 
 <ul>
 <li>Maven:</li>
 </ul>
 <div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.bomba-lang<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>bomba<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.3.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.bomba-lang<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>bomba<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>0.3.1<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>      
 </pre></div>
-</li>
-</ol>
 </li>
 <li>Otherwise:
 
@@ -94,14 +72,16 @@
 </li>
 </ul>
 </li>
-<li>Add:
+<li>
+<p>Add:</p>
 
 <div class="highlight highlight-scala"><pre>  <span class="k">import</span> <span class="nn">org.bomba_lang.proto._</span>
 </pre></div>
 
 <p>to your Scala import statements.</p>
 </li>
-<li>Add the <code>macro-paradise</code> compiler plugin to your Maven/SBT build - as described in <a href="http://docs.scala-lang.org/overviews/macros/paradise.html">the macro documentation</a>. </li>
+<li>
+<strong>IMPORTANT:</strong> add the <code>macro-paradise</code> compiler plugin to your Maven/SBT build - as described in <a href="http://docs.scala-lang.org/overviews/macros/paradise.html">the macro documentation</a>. </li>
 </ol><h2>
 <a name="syntax" class="anchor" href="#syntax"><span class="octicon octicon-link"></span></a>Syntax</h2>
 
