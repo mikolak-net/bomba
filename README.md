@@ -15,12 +15,12 @@ Usage
 	  ``` 
 	  - Maven:
 	  ```xml
-	<dependency>
+	  <dependency>
 		<groupId>org.bomba-lang</groupId>
 		<artifactId>bomba</artifactId>
 		<version>0.3.1</version>
-	</dependency>	     
-	```
+	  </dependency>	     
+	  ```
    - Otherwise:
      1. `mvn clean package`
  	 1. Add the resulting JAR to the build path of your project.
