@@ -56,10 +56,17 @@ package object proto {
 	val ⊥ = Nil
 	
 	/**
+	 * Utility implicits
+	 */
+	implicit def RuleSeq2Program(rules: Seq[Rule]) = new Program(rules: _*)
+	
+	implicit def Program2RuleSeq(program: Program): Seq[Rule] = program.rules
+	
+	/**
 	 * Generates all possible permutations (with replacement) of <code>items</code>
 	 * of length <code>length</code>.
 	 */
-	def permutations[T](items: Set[T],length: Int): Set[List[T]] = {
+	private[bomba_lang] def permutations[T](items: Set[T],length: Int): Set[List[T]] = {
 		
 	  if(length < 0) {
 	    throw new IllegalArgumentException("Length must be >= 0")
@@ -81,7 +88,7 @@ package object proto {
   /**
    * Helper function for variable set generation in a given part of a rule.
    */
-  def extractVars(litSet: Set[Literal]): Set[Variable] = {
+  private[bomba_lang] def extractVars(litSet: Set[Literal]): Set[Variable] = {
       litSet.flatMap(_.terms.filter(_.isInstanceOf[Variable])).toSet.asInstanceOf[Set[Variable]]
   }
   
