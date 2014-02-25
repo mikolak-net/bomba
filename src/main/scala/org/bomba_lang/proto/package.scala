@@ -32,7 +32,7 @@ package object proto {
 	/**
 	 * Implicit conversion for constraints.
 	 */
-	implicit def Nil2Rule(nil: Nil.type) = new ConstraintRule(Set())
+	implicit def Nil2Rule(nil: Nil.type) = new FactRule(Set())
 
 	/**
 	 * Use this annotation on a val to instantiate a program.
@@ -58,9 +58,9 @@ package object proto {
 	/**
 	 * Utility implicits
 	 */
-	implicit def RuleSeq2Program(rules: Seq[Rule]) = new Program(rules: _*)
+	private[bomba_lang] implicit def RuleSeq2Program(rules: Seq[Rule]) = new Program(rules: _*)
 	
-	implicit def Program2RuleSeq(program: Program): Seq[Rule] = program.rules
+	private[bomba_lang] implicit def Program2RuleSeq(program: Program): Seq[Rule] = program.rules
 	
 	/**
 	 * Generates all possible permutations (with replacement) of <code>items</code>

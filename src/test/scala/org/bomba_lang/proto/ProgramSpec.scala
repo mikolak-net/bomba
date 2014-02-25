@@ -91,7 +91,7 @@ class ProgSpec extends FlatSpec with Matchers {
 
     (Nil :-(p.a, ~p.b)).body should be(Set(a1, a2))
   }
-
+  
   val testPosRule = p.m :- p.a
 
   it should "be applicable in the positive case iff its body is contained in I" in {
@@ -141,6 +141,19 @@ class ProgSpec extends FlatSpec with Matchers {
     new Program(-p.m, p.m)
 
   }
+  
+  val feedProg = new Program(p.x)
+  
+  it should "accept unary feeds" in {
+    feedProg.feed("y")(1,2,3) should be(new Program(p.x,p.y(1),p.y(2),p.y(3)))
+  }
+  
+  it should "accept N-ary feeds" in {
+    val tuple1 = (1,"a",List(true))
+    val tuple2 = (2,"b",List(false))
+    
+    feedProg.feed("z")(tuple1,tuple2) should be(new Program(p.x,p.z(1,"a",List(true)),p.z(2,"b",List(false))))
+  }
 
   it should "accept I as a model iff all rules accept I as a model" in {
     val testProgram = new Program(p.m v p.n, p.o v p.p)
@@ -149,7 +162,6 @@ class ProgSpec extends FlatSpec with Matchers {
     testProgram.modelOf(Set(p.m, p.n)) should be(false)
   }
 
-  
 
   
   "A ground Program" should "pass ground programs unmodified" in {
