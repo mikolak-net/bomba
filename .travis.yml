@@ -1,1 +1,2 @@
 language: scala
+script: mvn clean package -PwithMetrics,travisCI
