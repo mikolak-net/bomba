@@ -106,6 +106,77 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>scala-maven-plugin</artifactId>
+						<version>3.1.6</version>
+						<executions>
+							<execution>
+								<id>scalac</id>
+								<goals>
+									<goal>compile</goal>
+									<goal>testCompile</goal>
+								</goals>
+								<configuration>
+									<args>
+										<arg>-P:genjavadoc:out=${javadoc.output}</arg>
+										<arg>-make:transitive</arg>
+										<arg>-dependencyfile</arg>
+										<arg>${project.build.directory}/.scala_dependencies</arg>
+									</args>
+									<compilerPlugins>
+										<compilerPlugin>
+											<groupId>org.scala-lang.plugins</groupId>
+											<artifactId>macro-paradise_${scala.version}</artifactId>
+											<version>2.0.0-SNAPSHOT</version>
+										</compilerPlugin>
+										<compilerPlugin>
+											<groupId>com.typesafe.genjavadoc</groupId>
+											<artifactId>genjavadoc-plugin_${scala.version}</artifactId>
+											<version>0.5</version>
+										</compilerPlugin>
+									</compilerPlugins>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>${javadoc.output}</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.9</version>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<minmemory>64m</minmemory>
+							<maxmemory>2g</maxmemory>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<detectLinks>true</detectLinks>
+						</configuration>
+					</plugin>
+					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
 						<version>1.4</version>
@@ -134,13 +205,13 @@
 				<version>3.1.6</version>
 				<executions>
 					<execution>
+						<id>scalac</id>
 						<goals>
 							<goal>compile</goal>
 							<goal>testCompile</goal>
 						</goals>
 						<configuration>
 							<args>
-								<arg>-P:genjavadoc:out=${javadoc.output}</arg>
 								<arg>-make:transitive</arg>
 								<arg>-dependencyfile</arg>
 								<arg>${project.build.directory}/.scala_dependencies</arg>
@@ -150,11 +221,6 @@
 									<groupId>org.scala-lang.plugins</groupId>
 									<artifactId>macro-paradise_${scala.version}</artifactId>
 									<version>2.0.0-SNAPSHOT</version>
-								</compilerPlugin>
-								<compilerPlugin>
-									<groupId>com.typesafe.genjavadoc</groupId>
-									<artifactId>genjavadoc-plugin_${scala.version}</artifactId>
-									<version>0.5</version>
 								</compilerPlugin>
 							</compilerPlugins>
 						</configuration>
@@ -177,43 +243,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${javadoc.output}</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9</version>
-				<executions>
-					<execution>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<minmemory>64m</minmemory>
-					<maxmemory>2g</maxmemory>
-					<outputDirectory>${project.build.directory}</outputDirectory>
-					<detectLinks>true</detectLinks>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
