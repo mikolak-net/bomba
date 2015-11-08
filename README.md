@@ -1,7 +1,7 @@
 **bomba** - a prototype Answer Set Programming Scala DSL
 =====================================================================
 
-[![Build Status](https://travis-ci.org/mikolak-net/bomba.svg?branch=master)](https://travis-ci.org/mikolak-net/bomba)
+[![Build Status](https://travis-ci.org/mikolak-net/bomba.svg?branch=master)](https://travis-ci.org/mikolak-net/bomba) [![Coverage Status](https://coveralls.io/repos/mikolak-net/bomba/badge.svg?branch=master&service=github)](https://coveralls.io/github/mikolak-net/bomba?branch=master)
 
 Bomba is an [Answer Set Programming](https://en.wikipedia.org/wiki/Answer_set_programming) dialect in the form of a Scala DSL. It is intended, currently, as a prototype to experiment with possible syntax and semantic variants, as well as language integration.
 
